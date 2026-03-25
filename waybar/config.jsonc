@@ -114,7 +114,7 @@
         "format-ethernet": "NET {ipaddr}",
         "format-disconnected": "NET off",
         "tooltip-format-wifi": "{essid} {signalStrength}%\n{ipaddr}",
-        "on-click": "sh -c 'nm-connection-editor >/dev/null 2>&1 || kitty -e nmtui'"
+        "on-click": "/run/current-system/sw/bin/nm-connection-editor"
     },
 
     "tray": {
