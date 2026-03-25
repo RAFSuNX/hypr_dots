@@ -19,6 +19,8 @@ configuration {
     /* Performance */
     lazy-grab: true;
     dpi: -1;
+    location: 0;
+    yoffset: -40;
 }
 
 /* Import theme */
