@@ -7,14 +7,14 @@
 
 set -euo pipefail
 
-# Icons (Unicode - no special font needed)
-ICON_WIFI="📶"
+# Icons (Simple ASCII/Unicode)
 ICON_DISCONNECTED="✕"
-ICON_SIGNAL_EXCELLENT="▂▄▆█"
-ICON_SIGNAL_GOOD="▂▄▆"
-ICON_SIGNAL_OK="▂▄"
-ICON_SIGNAL_WEAK="▂"
+ICON_SIGNAL_EXCELLENT="████"
+ICON_SIGNAL_GOOD="███░"
+ICON_SIGNAL_OK="██░░"
+ICON_SIGNAL_WEAK="█░░░"
 ICON_CONNECTED="●"
+ICON_SECURITY="⚿"
 
 # Get current connection
 get_current_network() {
@@ -53,16 +53,16 @@ get_networks() {
         local signal_icon
         signal_icon=$(get_signal_icon "$signal")
 
-        # Check if connected
+        # Check if connected (green dot)
         local status_icon=""
         if [ "$ssid" = "$current_network" ]; then
-            status_icon="$ICON_CONNECTED "
+            status_icon="<span foreground='#00ff00'>$ICON_CONNECTED</span> "
         fi
 
         # Format security
         local security_text=""
         if [ "$security" != "--" ]; then
-            security_text=" 🔒"
+            security_text=" $ICON_SECURITY"
         fi
 
         # Output format: "icon ssid signal% security"
@@ -134,7 +134,7 @@ main() {
 
     # Show rofi menu
     local selected
-    selected=$(echo -e "$menu" | rofi -dmenu -i -p "WiFi")
+    selected=$(echo -e "$menu" | rofi -dmenu -i -p "WiFi" -markup-rows)
 
     # Handle selection
     if [ -z "$selected" ]; then

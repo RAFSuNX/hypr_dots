@@ -45,7 +45,7 @@
 window {
     background-color: #1a110ef2;
     transparency:    "real";
-    border:           2px;
+    border:           1px;
     border-color:     @primary;
     border-radius:    0px;
     width:            600px;
@@ -73,7 +73,7 @@ mainbox {
 
 inputbar {
     background-color: @surface-high;
-    border:           0px 0px 2px 0px;
+    border:           0px 0px 1px 0px;
     border-color:     @primary;
     border-radius:    0px;
     padding:          16px 20px;
@@ -162,7 +162,7 @@ element normal.normal {
 element selected.normal {
     background-color: @primary-container;
     text-color:       @on-primary-container;
-    border:           0px 0px 0px 3px;
+    border:           0px 0px 0px 1px;
     border-color:     @primary;
 }
 
