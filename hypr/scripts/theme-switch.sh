@@ -32,6 +32,34 @@ log_error() {
     echo -e "\033[1;31m[ERROR]\033[0m $*"
 }
 
+wait_for_layer_exit() {
+    local namespace="$1"
+    local attempts=20
+
+    while [ "$attempts" -gt 0 ]; do
+        if ! hyprctl layers 2>/dev/null | grep -q "namespace: ${namespace},"; then
+            return 0
+        fi
+
+        sleep 0.1
+        attempts=$((attempts - 1))
+    done
+
+    return 1
+}
+
+kill_pids_by_name() {
+    local name="$1"
+    local signal="${2:-TERM}"
+    local pids
+
+    pids="$(pgrep -x "$name" 2>/dev/null || true)"
+    if [ -n "$pids" ]; then
+        # shellcheck disable=SC2086
+        kill "-${signal}" $pids 2>/dev/null || true
+    fi
+}
+
 check_dependencies() {
     local deps=("swww" "matugen" "hyprctl")
     local missing=()
@@ -90,14 +118,18 @@ reload_apps() {
 
     # Restart Waybar cleanly to avoid races between old and newly spawned instances.
     log_info "Restarting waybar..."
-    pkill -x waybar 2>/dev/null || true
-    sleep 0.2
+    kill_pids_by_name "waybar"
+    if ! wait_for_layer_exit "waybar"; then
+        log_info "Waybar layer still present, forcing shutdown..."
+        kill_pids_by_name "waybar" "KILL"
+        wait_for_layer_exit "waybar" || true
+    fi
     waybar &
     disown
 
     # Restart SwayNC cleanly for the same reason.
     log_info "Restarting swaync..."
-    pkill -x swaync 2>/dev/null || true
+    kill_pids_by_name "swaync"
     sleep 0.2
     swaync &
     disown
@@ -108,7 +140,7 @@ reload_apps() {
 
     # Kitty auto-reloads via theme.conf include
     # Send signal to all kitty instances to reload config
-    pkill -SIGUSR1 -x kitty 2>/dev/null || true
+    kill_pids_by_name "kitty" "USR1"
 
     log_success "Applications reloaded"
 }
