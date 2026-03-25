@@ -40,11 +40,7 @@ get_networks() {
     local current_network
     current_network=$(get_current_network)
 
-    # Scan for networks
-    nmcli device wifi rescan 2>/dev/null || true
-    sleep 1
-
-    # Get network list
+    # Get network list (use cached results for speed)
     nmcli -f SSID,SIGNAL,SECURITY device wifi list | tail -n +2 | while read -r ssid signal security; do
         # Skip empty SSIDs
         [ -z "$ssid" ] && continue
@@ -53,10 +49,10 @@ get_networks() {
         local signal_icon
         signal_icon=$(get_signal_icon "$signal")
 
-        # Check if connected (green dot)
+        # Check if connected (green dot on right)
         local status_icon=""
         if [ "$ssid" = "$current_network" ]; then
-            status_icon="<span foreground='#00ff00'>$ICON_CONNECTED</span> "
+            status_icon=" <span foreground='#00ff00'>$ICON_CONNECTED</span>"
         fi
 
         # Format security
@@ -65,8 +61,8 @@ get_networks() {
             security_text=" $ICON_SECURITY"
         fi
 
-        # Output format: "icon ssid signal% security"
-        echo "${status_icon}${signal_icon}  ${ssid}${security_text}"
+        # Output format: "signal icon  ssid  security  green_dot"
+        echo "${signal_icon}  ${ssid}${security_text}${status_icon}"
     done
 }
 

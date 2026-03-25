@@ -76,9 +76,9 @@ inputbar {
     border:           0px 0px 1px 0px;
     border-color:     @primary;
     border-radius:    0px;
-    padding:          16px 20px;
+    padding:          10px 14px;
     children:         [ prompt, entry ];
-    spacing:          12px;
+    spacing:          10px;
 }
 
 prompt {
@@ -126,7 +126,7 @@ listview {
     cycle:            false;
     dynamic:          false;
     scrollbar:        true;
-    padding:          8px 0px;
+    padding:          4px 0px;
 }
 
 /* ============================================================================
@@ -140,7 +140,7 @@ element {
     border:           0px;
     border-color:     transparent;
     border-radius:    0px;
-    padding:          14px 20px;
+    padding:          8px 14px;
 }
 
 element-icon {
