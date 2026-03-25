@@ -14,7 +14,7 @@ set -euo pipefail
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly CONFIG_DIR="${HOME}/.config"
-readonly WALLS_DIR="${HOME}/claude/rice/walls"
+readonly WALLS_DIR="${CONFIG_DIR}/walls"
 
 # ============================================================================
 # Functions
