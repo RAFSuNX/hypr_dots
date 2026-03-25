@@ -7,14 +7,14 @@
 
 set -euo pipefail
 
-# Icons
-ICON_WIFI="󰖩"
-ICON_DISCONNECTED="󰖪"
-ICON_SIGNAL_EXCELLENT="󰥨"
-ICON_SIGNAL_GOOD="󰥥"
-ICON_SIGNAL_OK="󰥢"
-ICON_SIGNAL_WEAK="󰥠"
-ICON_CONNECTED="󰄬"
+# Icons (Unicode - no special font needed)
+ICON_WIFI="📶"
+ICON_DISCONNECTED="✕"
+ICON_SIGNAL_EXCELLENT="▂▄▆█"
+ICON_SIGNAL_GOOD="▂▄▆"
+ICON_SIGNAL_OK="▂▄"
+ICON_SIGNAL_WEAK="▂"
+ICON_CONNECTED="●"
 
 # Get current connection
 get_current_network() {
@@ -62,7 +62,7 @@ get_networks() {
         # Format security
         local security_text=""
         if [ "$security" != "--" ]; then
-            security_text=" 󰌾"
+            security_text=" 🔒"
         fi
 
         # Output format: "icon ssid signal% security"
@@ -85,7 +85,7 @@ connect_network() {
     if [ "$security" != "--" ]; then
         # Prompt for password using rofi
         local password
-        password=$(rofi -dmenu -p "Password for $ssid" -password -theme-str 'entry { placeholder: "Enter password..."; }')
+        password=$(rofi -dmenu -p "Password" -password)
 
         if [ -n "$password" ]; then
             nmcli device wifi connect "$ssid" password "$password" && \
@@ -134,9 +134,7 @@ main() {
 
     # Show rofi menu
     local selected
-    selected=$(echo -e "$menu" | rofi -dmenu -i -p "WiFi Networks" \
-        -theme-str 'window { width: 400px; }' \
-        -theme-str 'listview { lines: 12; }')
+    selected=$(echo -e "$menu" | rofi -dmenu -i -p "WiFi")
 
     # Handle selection
     if [ -z "$selected" ]; then
