@@ -43,10 +43,10 @@
  */
 
 window {
-    background-color: @surface;
+    background-color: {{ colors.surface.default.hex }}cc;
     border:           1px;
     border-color:     @outline;
-    border-radius:    6px;
+    border-radius:    0px;
     width:            860px;
     padding:          18px;
 }
@@ -68,10 +68,10 @@ mainbox {
  */
 
 inputbar {
-    background-color: @surface-container;
+    background-color: {{ colors.surface_container.default.hex }}dd;
     border:           1px;
     border-color:     @outline-variant;
-    border-radius:    4px;
+    border-radius:    0px;
     padding:          12px 16px;
     children:         [ prompt, entry ];
     spacing:          12px;
@@ -97,10 +97,10 @@ entry {
  */
 
 message {
-    background-color: @surface-high;
+    background-color: {{ colors.surface_container_high.default.hex }}d9;
     border:           1px;
     border-color:     @outline-variant;
-    border-radius:    4px;
+    border-radius:    0px;
     padding:          10px 12px;
 }
 
@@ -134,7 +134,7 @@ element {
     text-color:       @foreground;
     border:           1px;
     border-color:     transparent;
-    border-radius:    4px;
+    border-radius:    0px;
     padding:          10px 12px;
 }
 
@@ -193,8 +193,8 @@ element selected.active {
  */
 
 scrollbar {
-    background-color: @surface-container;
-    border-radius:    4px;
+    background-color: {{ colors.surface_container.default.hex }}d9;
+    border-radius:    0px;
     width:            8px;
     handle-width:     8px;
     handle-color:     @outline-variant;
