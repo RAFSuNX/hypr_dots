@@ -1,0 +1,25 @@
+/* ============================================================================
+ * Rofi Configuration
+ * ============================================================================
+ */
+
+configuration {
+    /* Display settings */
+    modi: "drun,run,window";
+    show-icons: true;
+    icon-theme: "Papirus";
+    display-drun: " Apps";
+    display-run: " Run";
+    display-window: " Windows";
+
+    /* Behavior */
+    drun-display-format: "{name}";
+    window-format: "{w} · {c} · {t}";
+
+    /* Performance */
+    lazy-grab: true;
+    dpi: -1;
+}
+
+/* Import theme */
+@theme "theme.rasi"

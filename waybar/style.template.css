@@ -1,0 +1,112 @@
+/* ============================================================================
+ * Waybar Theme - Hyprland Rice
+ * ============================================================================
+ * DO NOT EDIT style.css MANUALLY - Edit this template instead
+ * Colors extracted from wallpaper using Material You algorithm via matugen
+ * Minimal border-based design with dynamic theming
+ * ============================================================================
+ */
+
+* {
+    /* Font configuration */
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 12px;
+    min-height: 0;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+}
+
+/* ============================================================================
+ * Main Bar
+ * ============================================================================
+ */
+
+window#waybar {
+    background: {{ colors.surface_container.default.hex }};
+    color: {{ colors.on_surface.default.hex }};
+    border-bottom: 1px solid {{ colors.outline.default.hex }};
+}
+
+/* ── LEFT ─────────────────────────────── */
+
+#workspaces {
+    margin: 0 4px;
+}
+
+#workspaces button {
+    padding: 0 10px;
+    color: {{ colors.outline.default.hex }};
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.15s ease;
+}
+
+#workspaces button.active {
+    color: {{ colors.primary.default.hex }};
+    border-bottom: 1px solid {{ colors.primary.default.hex }};
+}
+
+#workspaces button:hover {
+    color: {{ colors.on_surface.default.hex }};
+    background: {{ colors.surface_container_high.default.hex }};
+}
+
+#window {
+    color: {{ colors.outline.default.hex }};
+    padding: 0 8px;
+    font-size: 11px;
+}
+
+/* ── CENTER ───────────────────────────── */
+
+#clock {
+    color: {{ colors.on_surface.default.hex }};
+    padding: 0 16px;
+    letter-spacing: 0.5px;
+}
+
+/* ── RIGHT ────────────────────────────── */
+
+#pulseaudio,
+#backlight,
+#battery,
+#network,
+#custom-cpu,
+#memory,
+#custom-gpu {
+    padding: 0 12px;
+    color: {{ colors.on_surface.default.hex }};
+    border-left: 1px solid {{ colors.outline.default.hex }};
+}
+
+#pulseaudio.muted { color: {{ colors.outline.default.hex }}; }
+#battery.warning  { color: {{ colors.tertiary.default.hex }}; }
+#battery.critical { color: {{ colors.error.default.hex }}; }
+#battery.charging { color: {{ colors.primary.default.hex }}; }
+#network.disconnected { color: {{ colors.outline.default.hex }}; }
+
+#tray {
+    padding: 0 10px;
+    border-left: 1px solid {{ colors.outline.default.hex }};
+}
+
+#tray menu {
+    background: {{ colors.surface_container_high.default.hex }};
+    border: 1px solid {{ colors.outline.default.hex }};
+    color: {{ colors.on_surface.default.hex }};
+}
+
+tooltip {
+    background: {{ colors.surface_container_high.default.hex }};
+    border: 1px solid {{ colors.outline.default.hex }};
+    color: {{ colors.on_surface.default.hex }};
+    border-radius: 0;
+    font-size: 11px;
+}
+
+/* ============================================================================
+ * End of Theme
+ * ============================================================================
+ */

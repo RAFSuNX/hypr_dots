@@ -1,0 +1,116 @@
+# ============================================================================
+# Matugen Configuration - Wallpaper-Based Material You Theming
+# ============================================================================
+# Purpose: Extract colors from wallpaper and generate themed configs
+# Documentation: https://github.com/InioX/matugen
+# ============================================================================
+
+# ============================================================================
+# General Configuration
+# ============================================================================
+[config]
+# theme-switch.sh already handles app reload/startup. Keep this off to avoid
+# overlapping reload behavior with Hyprland session startup.
+reload_apps = false
+
+# Set wallpaper after color extraction
+set_wallpaper = false  # We handle wallpaper with swww separately
+
+# Color scheme type - Material You algorithm
+# Options: scheme-tonal-spot (default), scheme-vibrant, scheme-neutral,
+#          scheme-expressive, scheme-fidelity, scheme-content, etc.
+type = "scheme-tonal-spot"
+
+# Color mode - light or dark
+mode = "dark"
+
+# Contrast adjustment (-1 to 1)
+# -1 = minimum contrast, 0 = standard, 1 = maximum contrast
+contrast = 0.0
+
+# Prefix for all template paths (relative to home)
+# prefix = "~/.config"
+
+# ============================================================================
+# Templates - Define input templates and output locations
+# ============================================================================
+# Template syntax:
+#   {{ colors.primary.default.hex }}
+#   {{ colors.on_primary.default.hex }}
+#   {{ colors.surface.default.hex }}
+# Available color keys: primary, on_primary, secondary, on_secondary,
+#   tertiary, on_tertiary, error, on_error, surface, on_surface,
+#   surface_variant, on_surface_variant, outline, outline_variant,
+#   *_container variants, surface_container_* variants
+
+# ----------------------------------------------------------------------------
+# Hyprland Theme
+# ----------------------------------------------------------------------------
+[templates.hyprland]
+input_path = "~/.config/hypr/theme.conf.template"
+output_path = "~/.config/hypr/theme.conf"
+
+# ----------------------------------------------------------------------------
+# Waybar Theme
+# ----------------------------------------------------------------------------
+[templates.waybar]
+input_path = "~/.config/waybar/style.template.css"
+output_path = "~/.config/waybar/style.css"
+
+# ----------------------------------------------------------------------------
+# SwayNC (Notification Center) Theme
+# ----------------------------------------------------------------------------
+[templates.swaync]
+input_path = "~/.config/swaync/style.template.css"
+output_path = "~/.config/swaync/style.css"
+
+# ----------------------------------------------------------------------------
+# Rofi (App Launcher) Theme
+# ----------------------------------------------------------------------------
+[templates.rofi]
+input_path = "~/.config/rofi/theme.template.rasi"
+output_path = "~/.config/rofi/theme.rasi"
+
+# ----------------------------------------------------------------------------
+# Kitty Terminal Theme
+# ----------------------------------------------------------------------------
+[templates.kitty]
+input_path = "~/.config/kitty/theme.conf.template"
+output_path = "~/.config/kitty/theme.conf"
+
+# ============================================================================
+# Reload Apps - Commands to run after template generation
+# ============================================================================
+# These commands reload the apps to apply new themes instantly
+
+# Reload Waybar
+[[reload_apps_commands]]
+command = "pkill"
+args = ["-SIGUSR2", "waybar"]
+
+# Reload SwayNC
+[[reload_apps_commands]]
+command = "pkill"
+args = ["-SIGUSR1", "swaync"]
+
+# Reload Hyprland config
+[[reload_apps_commands]]
+command = "hyprctl"
+args = ["reload"]
+
+# Kitty auto-reloads theme.conf via watch_theme.conf include
+# No manual reload needed
+
+# ============================================================================
+# Export Formats (Optional) - Generate color exports
+# ============================================================================
+# Uncomment to export colors in various formats for debugging/use
+
+# [export]
+# json = "~/.config/matugen/colors.json"
+# scss = "~/.config/matugen/colors.scss"
+# css = "~/.config/matugen/colors.css"
+
+# ============================================================================
+# End of Configuration
+# ============================================================================

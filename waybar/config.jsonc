@@ -1,0 +1,125 @@
+// ============================================================================
+// Waybar Configuration - Hyprland Rice
+// ============================================================================
+// Minimal border-based design with dynamic Material You theming
+// ============================================================================
+
+{
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "spacing": 0,
+    "exclusive": true,
+
+    // ── Module Layout ───────────────────────────────────────────────────────
+
+    "modules-left": [
+        "hyprland/workspaces",
+        "hyprland/window"
+    ],
+
+    "modules-center": [
+        "clock"
+    ],
+
+    "modules-right": [
+        "network",
+        "custom/cpu",
+        "memory",
+        "custom/gpu",
+        "pulseaudio",
+        "backlight",
+        "battery",
+        "tray"
+    ],
+
+    // ── Left Modules ────────────────────────────────────────────────────────
+
+    "hyprland/workspaces": {
+        "format": "{id}",
+        "on-click": "activate",
+        "sort-by-number": true
+    },
+
+    "hyprland/window": {
+        "format": "▸ {}",
+        "max-length": 60,
+        "separate-outputs": true
+    },
+
+    // ── Center Modules──────────────────────────────────────────────────────
+
+    "clock": {
+        "format": "{:%I:%M %p - %a %d %b}",
+        "timezone": "Asia/Dhaka",
+        "tooltip-format": "<tt>{calendar}</tt>",
+        "calendar": {
+            "mode": "month",
+            "on-scroll": 1
+        }
+    },
+
+    // ── Right Modules ───────────────────────────────────────────────────────
+
+    "custom/cpu": {
+        "exec": "~/.config/waybar/scripts/cpu-status.sh",
+        "interval": 3,
+        "tooltip": false
+    },
+
+    "memory": {
+        "interval": 5,
+        "format": "RAM {percentage}%",
+        "tooltip-format": "{used:0.1f}G / {total:0.1f}G"
+    },
+
+    "custom/gpu": {
+        "exec": "~/.config/waybar/scripts/gpu-status.sh",
+        "interval": 3,
+        "tooltip": false
+    },
+
+    "pulseaudio": {
+        "format": "VOL {volume}%",
+        "format-muted": "VOL mute",
+        "on-click": "pavucontrol",
+        "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-",
+        "tooltip": false
+    },
+
+    "backlight": {
+        "format": "BRI {percent}%",
+        "on-scroll-up": "brightnessctl set 2%+",
+        "on-scroll-down": "brightnessctl set 2%-",
+        "tooltip": false
+    },
+
+    "battery": {
+        "bat": "BAT1",
+        "interval": 30,
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "BAT {capacity}%",
+        "format-charging": "CHR {capacity}%",
+        "format-full": "BAT full",
+        "tooltip": false
+    },
+
+    "network": {
+        "interface": "wlp3s0",
+        "format-wifi": "NET {signalStrength}%",
+        "format-ethernet": "NET {ipaddr}",
+        "format-disconnected": "NET off",
+        "tooltip-format-wifi": "{essid} {signalStrength}%\n{ipaddr}",
+        "on-click": "kitty -e nmtui"
+    },
+
+    "tray": {
+        "icon-size": 14,
+        "spacing": 8
+    }
+}
+
