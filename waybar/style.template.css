@@ -23,7 +23,7 @@
  */
 
 window#waybar {
-    background: {{ colors.surface_container.default.hex }};
+    background: transparent;
     color: {{ colors.on_surface.default.hex }};
     border-bottom: 1px solid {{ colors.outline.default.hex }};
 }
