@@ -136,6 +136,10 @@ save_current_wallpaper() {
     echo "$wallpaper" > "${CONFIG_DIR}/.current_wallpaper"
 }
 
+pick_random_wallpaper() {
+    find "${WALLS_DIR}" -maxdepth 1 -type f | shuf -n 1
+}
+
 # ============================================================================
 # Main
 # ============================================================================
@@ -150,18 +154,24 @@ main() {
     # Get wallpaper path
     local wallpaper="${1:-}"
 
-    # If no wallpaper specified, use default or show usage
+    # If no wallpaper specified, choose a random wallpaper from the walls folder.
     if [ -z "$wallpaper" ]; then
-        if [ -f "${CONFIG_DIR}/.current_wallpaper" ]; then
-            wallpaper="$(cat "${CONFIG_DIR}/.current_wallpaper")"
-            log_info "Using current wallpaper: $(basename "$wallpaper")"
-        elif [ -f "${WALLS_DIR}/default.jpg" ]; then
-            wallpaper="${WALLS_DIR}/default.jpg"
-            log_info "Using default wallpaper"
-        else
-            log_error "Usage: $0 <wallpaper-path>"
-            log_error "No wallpaper specified and no default found"
-            exit 1
+        if [ -d "${WALLS_DIR}" ]; then
+            wallpaper="$(pick_random_wallpaper)"
+            if [ -n "$wallpaper" ]; then
+                log_info "Using random wallpaper: $(basename "$wallpaper")"
+            fi
+        fi
+
+        if [ -z "$wallpaper" ]; then
+            if [ -f "${WALLS_DIR}/default.jpg" ]; then
+                wallpaper="${WALLS_DIR}/default.jpg"
+                log_info "Using default wallpaper"
+            else
+                log_error "Usage: $0 <wallpaper-path>"
+                log_error "No wallpapers found in ${WALLS_DIR}"
+                exit 1
+            fi
         fi
     fi
 
