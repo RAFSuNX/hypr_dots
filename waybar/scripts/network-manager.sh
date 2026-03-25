@@ -35,35 +35,34 @@ get_signal_icon() {
     fi
 }
 
-# Get list of WiFi networks
+# Get list of WiFi networks (fast version with awk)
 get_networks() {
     local current_network
     current_network=$(get_current_network)
 
-    # Get network list (use cached results for speed)
-    nmcli -f SSID,SIGNAL,SECURITY device wifi list | tail -n +2 | while read -r ssid signal security; do
-        # Skip empty SSIDs
-        [ -z "$ssid" ] && continue
+    # Process network list with awk for speed
+    nmcli -f SSID,SIGNAL,SECURITY device wifi list | tail -n +2 | awk -v current="$current_network" '
+    {
+        ssid = $1
+        signal = $2
+        security = $3
 
-        # Get signal icon
-        local signal_icon
-        signal_icon=$(get_signal_icon "$signal")
+        if (ssid == "") next
 
-        # Check if connected (green dot on right)
-        local status_icon=""
-        if [ "$ssid" = "$current_network" ]; then
-            status_icon=" <span foreground='#00ff00'>$ICON_CONNECTED</span>"
-        fi
+        # Signal icon
+        if (signal >= 80) sig = "████"
+        else if (signal >= 60) sig = "███░"
+        else if (signal >= 40) sig = "██░░"
+        else sig = "█░░░"
 
-        # Format security
-        local security_text=""
-        if [ "$security" != "--" ]; then
-            security_text=" $ICON_SECURITY"
-        fi
+        # Security icon
+        sec = (security != "--") ? " ⚿" : ""
 
-        # Output format: "signal icon  ssid  security  green_dot"
-        echo "${signal_icon}  ${ssid}${security_text}${status_icon}"
-    done
+        # Connected icon (green)
+        conn = (ssid == current) ? " <span foreground=\"#00ff00\">●</span>" : ""
+
+        print sig "  " ssid sec conn
+    }'
 }
 
 # Connect to network
