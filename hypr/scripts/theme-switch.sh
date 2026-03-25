@@ -116,31 +116,16 @@ generate_themes() {
 reload_apps() {
     log_info "Reloading applications..."
 
-    # Reload Hyprland before restarting layer-shell clients so the new bar does
-    # not get torn down by an immediate compositor reload.
     log_info "Reloading hyprland..."
     hyprctl reload
 
-    # Restart Waybar cleanly to avoid races between old and newly spawned instances.
-    log_info "Restarting waybar..."
-    kill_pids_by_name "waybar"
-    if ! wait_for_layer_exit "waybar"; then
-        log_info "Waybar layer still present, forcing shutdown..."
-        kill_pids_by_name "waybar" "KILL"
-        wait_for_layer_exit "waybar" || true
-    fi
-    waybar &
-    disown
+    log_info "Reloading waybar..."
+    kill_pids_by_name "waybar" "USR2"
 
-    # Restart SwayNC cleanly for the same reason.
-    log_info "Restarting swaync..."
-    kill_pids_by_name "swaync"
-    sleep 0.2
-    swaync &
-    disown
+    log_info "Reloading swaync..."
+    kill_pids_by_name "swaync" "USR1"
 
     # Kitty auto-reloads via theme.conf include
-    # Send signal to all kitty instances to reload config
     kill_pids_by_name "kitty" "USR1"
 
     log_success "Applications reloaded"
