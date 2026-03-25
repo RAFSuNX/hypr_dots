@@ -88,33 +88,19 @@ generate_themes() {
 reload_apps() {
     log_info "Reloading applications..."
 
-    # Reload Waybar
-    if pgrep -x waybar > /dev/null; then
-        log_info "Reloading waybar..."
-        killall -SIGUSR2 waybar 2>/dev/null || {
-            killall waybar 2>/dev/null
-            waybar &
-            disown
-        }
-    else
-        log_info "Starting waybar..."
-        waybar &
-        disown
-    fi
+    # Restart Waybar cleanly to avoid races between old and newly spawned instances.
+    log_info "Restarting waybar..."
+    pkill -x waybar 2>/dev/null || true
+    sleep 0.2
+    waybar &
+    disown
 
-    # Reload SwayNC
-    if pgrep -x swaync > /dev/null; then
-        log_info "Reloading swaync..."
-        killall -SIGUSR1 swaync 2>/dev/null || {
-            killall swaync 2>/dev/null
-            swaync &
-            disown
-        }
-    else
-        log_info "Starting swaync..."
-        swaync &
-        disown
-    fi
+    # Restart SwayNC cleanly for the same reason.
+    log_info "Restarting swaync..."
+    pkill -x swaync 2>/dev/null || true
+    sleep 0.2
+    swaync &
+    disown
 
     # Reload Hyprland config
     log_info "Reloading hyprland..."
@@ -122,7 +108,7 @@ reload_apps() {
 
     # Kitty auto-reloads via theme.conf include
     # Send signal to all kitty instances to reload config
-    killall -SIGUSR1 kitty 2>/dev/null || true
+    pkill -SIGUSR1 -x kitty 2>/dev/null || true
 
     log_success "Applications reloaded"
 }
