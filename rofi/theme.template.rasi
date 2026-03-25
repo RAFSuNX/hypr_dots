@@ -44,6 +44,7 @@
 
 window {
     background-color: {{ colors.surface.default.hex }}cc;
+    transparency:    "real";
     border:           1px;
     border-color:     @outline;
     border-radius:    0px;
