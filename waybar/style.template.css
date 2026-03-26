@@ -78,7 +78,8 @@ window#waybar {
 #memory,
 #custom-gpu,
 #custom-power {
-    padding: 9px 8px;
+    padding: 0 8px;
+    margin: 8px 0;
     color: {{ colors.on_surface.default.hex }};
     border-left: 1px solid {{ colors.outline_variant.default.hex }};
 }
