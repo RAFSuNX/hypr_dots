@@ -69,16 +69,17 @@ window#waybar {
 
 /* ── RIGHT ────────────────────────────── */
 
+#network,
 #pulseaudio,
 #backlight,
 #battery,
-#network,
 #custom-cpu,
 #memory,
-#custom-gpu {
-    padding: 0 12px;
+#custom-gpu,
+#custom-power {
+    padding: 0 8px;
     color: {{ colors.on_surface.default.hex }};
-    border-left: 1px solid {{ colors.outline.default.hex }};
+    border-left: 1px solid {{ colors.outline_variant.default.hex }};
 }
 
 #pulseaudio.muted { color: {{ colors.outline.default.hex }}; }
@@ -88,8 +89,7 @@ window#waybar {
 #network.disconnected { color: {{ colors.outline.default.hex }}; }
 
 #tray {
-    padding: 0 10px;
-    border-left: 1px solid {{ colors.outline.default.hex }};
+    padding: 0 8px;
 }
 
 #tray menu {

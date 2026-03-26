@@ -23,6 +23,7 @@
     ],
 
     "modules-right": [
+        "tray",
         "network",
         "custom/cpu",
         "memory",
@@ -30,7 +31,7 @@
         "pulseaudio",
         "backlight",
         "battery",
-        "tray"
+        "custom/power"
     ],
 
     // ── Left Modules ────────────────────────────────────────────────────────
@@ -63,33 +64,34 @@
 
     "custom/cpu": {
         "exec": "~/.config/waybar/scripts/cpu-status.sh",
-        "interval": 3,
-        "tooltip": false
+        "return-type": "json",
+        "interval": 3
     },
 
     "memory": {
         "interval": 5,
-        "format": "RAM {percentage}%",
+        "format": "RAM {percentage:>2}%",
         "tooltip-format": "{used:0.1f}G / {total:0.1f}G"
     },
 
     "custom/gpu": {
         "exec": "~/.config/waybar/scripts/gpu-status.sh",
-        "interval": 3,
-        "tooltip": false
+        "return-type": "json",
+        "interval": 3
     },
 
     "pulseaudio": {
-        "format": "VOL {volume}%",
-        "format-muted": "VOL mute",
+        "format": "VOL {volume:>2}%",
+        "format-muted": "VOL off",
         "on-click": "pavucontrol",
         "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+",
         "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-",
+        "max-volume": 99,
         "tooltip": false
     },
 
     "backlight": {
-        "format": "BRI {percent}%",
+        "format": "BRI {percent:>2}%",
         "on-scroll-up": "brightnessctl set 2%+",
         "on-scroll-down": "brightnessctl set 2%-",
         "tooltip": false
@@ -102,16 +104,16 @@
             "warning": 30,
             "critical": 15
         },
-        "format": "BAT {capacity}%",
-        "format-charging": "CHR {capacity}%",
-        "format-full": "BAT full",
+        "format": "BAT {capacity:>2}%",
+        "format-charging": "CHR {capacity:>2}%",
+        "format-full": "BAT 99%",
         "tooltip": false
     },
 
     "network": {
         "interface": "wlp3s0",
-        "format-wifi": "NET {signalStrength}%",
-        "format-ethernet": "NET {ipaddr}",
+        "format-wifi": "NET {signalStrength:>2}%",
+        "format-ethernet": "NET eth",
         "format-disconnected": "NET off",
         "tooltip-format-wifi": "{essid} {signalStrength}%\n{ipaddr}",
         "on-click": "~/.config/waybar/scripts/network-manager.sh"
@@ -120,5 +122,11 @@
     "tray": {
         "icon-size": 14,
         "spacing": 8
+    },
+
+    "custom/power": {
+        "format": "POWER ",
+        "on-click": "~/.config/waybar/scripts/power-manager.sh",
+        "tooltip": false
     }
 }

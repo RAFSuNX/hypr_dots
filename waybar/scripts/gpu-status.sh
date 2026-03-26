@@ -14,11 +14,13 @@ set -euo pipefail
 get_nvidia_stats() {
     local usage
     local temp
+    local freq
 
     usage=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits | head -1)
     temp=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits | head -1)
+    freq=$(nvidia-smi --query-gpu=clocks.current.graphics --format=csv,noheader,nounits | head -1)
 
-    echo "${usage} ${temp}"
+    echo "${usage} ${temp} ${freq}"
 }
 
 # ── AMD GPU Stats ───────────────────────────────────────────────────────────
@@ -26,6 +28,7 @@ get_nvidia_stats() {
 get_amd_stats() {
     local usage="0"
     local temp="0"
+    local freq="0"
 
     # Get usage from sysfs (AMD GPUs expose this directly)
     if [[ -f /sys/class/drm/card1/device/gpu_busy_percent ]]; then
@@ -45,7 +48,13 @@ get_amd_stats() {
         temp=$(get_gpu_temp)
     fi
 
-    echo "${usage} ${temp}"
+    # Get frequency (current GPU clock in MHz)
+    if [[ -f /sys/class/drm/card1/device/pp_dpm_sclk ]]; then
+        freq=$(grep '\*' /sys/class/drm/card1/device/pp_dpm_sclk 2>/dev/null | \
+               grep -oP '\d+(?=MHz)' || echo "0")
+    fi
+
+    echo "${usage} ${temp} ${freq}"
 }
 
 # ── Generic GPU Temperature ─────────────────────────────────────────────────
@@ -72,23 +81,30 @@ get_gpu_temp() {
 main() {
     local usage="0"
     local temp="0"
+    local freq="0"
     local stats
 
     # Detect GPU type and get stats
     if command -v nvidia-smi &>/dev/null; then
         # NVIDIA GPU
         stats=$(get_nvidia_stats)
-        read -r usage temp <<< "$stats"
+        read -r usage temp freq <<< "$stats"
     elif [[ -f /sys/class/drm/card1/device/gpu_busy_percent ]] || command -v radeontop &>/dev/null; then
         # AMD GPU (check for sysfs stats or radeontop)
         stats=$(get_amd_stats)
-        read -r usage temp <<< "$stats"
+        read -r usage temp freq <<< "$stats"
     else
         # Fallback: try to get temperature only
         temp=$(get_gpu_temp)
     fi
 
-    echo "GPU ${usage}% ${temp}°C"
+    # Cap at 99
+    [ "$usage" -gt 99 ] && usage=99
+    [ "$temp" -gt 99 ] && temp=99
+
+    # Output JSON with tooltip
+    printf '{"text":"GPU %2d%% %2d°C","tooltip":"GPU Usage: %d%%\\nFrequency: %d MHz\\nTemperature: %d°C"}' \
+           "$usage" "$temp" "$usage" "$freq" "$temp"
 }
 
 main "$@"

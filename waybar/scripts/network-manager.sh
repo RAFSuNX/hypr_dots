@@ -55,12 +55,12 @@ get_networks() {
         else sig = "█░░░"
 
         # Security icon
-        sec = (security != "--") ? " ⚿" : ""
+        sec = (security != "--") ? "  ⚿" : "   "
 
-        # Connected icon (green)
-        conn = (ssid == current) ? " <span foreground=\"#00ff00\">●</span>" : ""
+        # Connected icon
+        conn = (ssid == current) ? "  ●" : "   "
 
-        print sig "  " ssid sec conn
+        printf "%s   %s%s%s\n", sig, ssid, sec, conn
     }'
 }
 
@@ -68,9 +68,9 @@ get_networks() {
 connect_network() {
     local selected=$1
 
-    # Extract SSID from selection (remove signal bars, security icon, green dot)
+    # Extract SSID from selection (remove signal bars, security icon, connected dot)
     local ssid
-    ssid=$(echo "$selected" | sed -E 's/^[█░]+ +//' | sed -E 's/ ⚿//g' | sed -E 's/ ?<span.*<\/span>//g' | xargs)
+    ssid=$(echo "$selected" | sed -E 's/^[█░]+ +//' | sed -E 's/ +⚿//g' | sed -E 's/ +●//g' | xargs)
 
     # Check if network requires password (use cached data)
     local security
@@ -115,20 +115,20 @@ main() {
 
     # Add disconnect option if connected
     if [ -n "$current_network" ]; then
-        menu="$ICON_DISCONNECTED  Disconnect from $current_network\n"
-        menu+="────────────────────────────────\n"
+        menu="✕   Disconnect from $current_network\n"
+        menu+="────────────────────────────────────────────────────────────────────────\n"
     fi
 
     # Add available networks (pass current_network to avoid duplicate call)
     menu+=$(get_networks "$current_network")
 
     # Add settings option
-    menu+="\n────────────────────────────────\n"
-    menu+="⚙  Network Settings"
+    menu+="\n────────────────────────────────────────────────────────────────────────\n"
+    menu+="⚙   Network Settings"
 
     # Show rofi menu
     local selected
-    selected=$(echo -e "$menu" | rofi -dmenu -i -p "WiFi" -markup-rows)
+    selected=$(echo -e "$menu" | rofi -dmenu -i -p "WiFi")
 
     # Handle selection
     if [ -z "$selected" ]; then
