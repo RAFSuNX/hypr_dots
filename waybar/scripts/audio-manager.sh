@@ -9,10 +9,6 @@ set -euo pipefail
 
 # Icons (Simple ASCII/Unicode)
 ICON_ACTIVE="●"
-ICON_SPEAKER="🔊"
-ICON_HEADPHONE="🎧"
-ICON_HDMI="📺"
-ICON_SETTINGS="⚙"
 
 # Get current default sink ID
 get_current_sink_id() {
@@ -39,15 +35,10 @@ get_audio_devices() {
         device_name = arr[1]
         gsub(/^ +| +$/, "", device_name)  # trim
 
-        # Determine icon
-        icon = "🔊"
-        if (device_name ~ /[Hh]eadphone|[Hh]eadset/) icon = "🎧"
-        else if (device_name ~ /HDMI|DisplayPort/) icon = "📺"
-
         # Mark active device
         active = (device_id == current_id) ? "  ●" : "   "
 
-        printf "%s   %s%s\n", icon, device_name, active
+        printf "%s%s\n", device_name, active
     }'
 }
 
@@ -55,9 +46,9 @@ get_audio_devices() {
 set_audio_device() {
     local selected=$1
 
-    # Extract device name from selection (remove icon and active marker)
+    # Extract device name from selection (remove active marker)
     local device_name
-    device_name=$(echo "$selected" | sed -E 's/^[🔊🎧📺] +//' | sed -E 's/ +●$//' | xargs)
+    device_name=$(echo "$selected" | sed -E 's/ +●$//' | xargs)
 
     # Get device ID by name
     local device_id
@@ -81,7 +72,7 @@ main() {
 
     # Add settings option
     menu+="\n────────────────────────────────────────────────────────────────────────\n"
-    menu+="⚙   Audio Settings"
+    menu+="Audio Settings"
 
     # Show rofi menu
     local selected
