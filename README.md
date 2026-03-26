@@ -23,9 +23,8 @@
 ## Directory Structure
 
 ```
-~/claude/rice/
+rice/
 ├── README.md              # This file
-├── CLAUDE.md              # Rice manager guide (for Claude)
 ├── hypr/
 │   ├── hyprland.conf      # Main Hyprland config
 │   ├── hyprlock.conf.template # Generates ~/.config/hypr/hyprlock.conf
@@ -64,14 +63,14 @@ Generated files are not tracked in this repo. `matugen` writes them into `~/.con
 ~/.config/hypr/scripts/theme-switch.sh ~/Pictures/wallpaper.jpg
 
 # Apply theme with wallpaper from walls folder
-~/.config/hypr/scripts/theme-switch.sh ~/claude/rice/walls/mywall.jpg
+~/.config/hypr/scripts/theme-switch.sh ~/hypr_dots/walls/mywall.jpg
 ```
 
 ### Add New Wallpapers
 
 ```bash
 # Copy wallpaper to walls folder
-cp ~/Downloads/cool-wallpaper.jpg ~/claude/rice/walls/
+cp ~/Downloads/cool-wallpaper.jpg ~/hypr_dots/walls/
 
 # Apply it
 ~/.config/hypr/scripts/theme-switch.sh ~/claude/rice/walls/cool-wallpaper.jpg
@@ -199,9 +198,9 @@ nano ~/.config/matugen/config.toml
 
 1. **Install NixOS packages** (already done in `/etc/nixos/configuration.nix`)
 
-2. **Clone/copy this rice folder**:
+2. **Clone this repository**:
    ```bash
-   cp -r ~/claude/rice ~/.config/
+   git clone https://github.com/RAFSuNX/hypr_dots.git ~/hypr_dots
    ```
 
 3. **Make theme script executable**:
