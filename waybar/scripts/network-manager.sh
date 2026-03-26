@@ -69,9 +69,9 @@ get_networks() {
 connect_network() {
     local selected=$1
 
-    # Extract SSID from selection (remove icons and signal)
+    # Extract SSID from selection (remove signal bars, security icon, green dot)
     local ssid
-    ssid=$(echo "$selected" | sed -E 's/^[^ ]* +//' | sed 's/ 󰌾$//')
+    ssid=$(echo "$selected" | sed -E 's/^[█░]+ +//' | sed -E 's/ ⚿//g' | sed -E 's/ ?<span.*<\/span>//g' | xargs)
 
     # Check if network requires password
     local security
