@@ -73,7 +73,7 @@ Generated files are not tracked in this repo. `matugen` writes them into `~/.con
 cp ~/Downloads/cool-wallpaper.jpg ~/hypr_dots/walls/
 
 # Apply it
-~/.config/hypr/scripts/theme-switch.sh ~/claude/rice/walls/cool-wallpaper.jpg
+~/.config/hypr/scripts/theme-switch.sh ~/hypr_dots/walls/cool-wallpaper.jpg
 ```
 
 ### What Happens When You Run theme-switch.sh
