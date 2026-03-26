@@ -32,36 +32,8 @@ log_error() {
     echo -e "\033[1;31m[ERROR]\033[0m $*"
 }
 
-wait_for_layer_exit() {
-    local namespace="$1"
-    local attempts=20
-
-    while [ "$attempts" -gt 0 ]; do
-        if ! hyprctl layers 2>/dev/null | grep -q "namespace: ${namespace},"; then
-            return 0
-        fi
-
-        sleep 0.1
-        attempts=$((attempts - 1))
-    done
-
-    return 1
-}
-
-kill_pids_by_name() {
-    local name="$1"
-    local signal="${2:-TERM}"
-    local pids
-
-    pids="$(pgrep -x "$name" 2>/dev/null || true)"
-    if [ -n "$pids" ]; then
-        # shellcheck disable=SC2086
-        kill "-${signal}" $pids 2>/dev/null || true
-    fi
-}
-
 check_dependencies() {
-    local deps=("swww" "matugen" "hyprctl")
+    local deps=("swww" "matugen" "hyprctl" "pkill" "pgrep")
     local missing=()
 
     for dep in "${deps[@]}"; do
@@ -81,7 +53,14 @@ start_swww_daemon() {
     if ! pgrep -x swww-daemon > /dev/null; then
         log_info "Starting swww daemon..."
         swww-daemon &
-        sleep 1
+        
+        # Wait up to 2 seconds for socket to be ready
+        for _ in {1..20}; do
+            if swww query &>/dev/null; then
+                break
+            fi
+            sleep 0.1
+        done
     fi
 }
 
@@ -116,19 +95,30 @@ generate_themes() {
 reload_apps() {
     log_info "Reloading applications..."
 
-    log_info "Reloading hyprland..."
-    hyprctl reload
+    # Reload hyprland instantly
+    hyprctl reload &
 
-    log_info "Reloading waybar..."
-    kill_pids_by_name "waybar" "USR2"
+    # Hard restart Waybar (use -f for wrapped processes)
+    (
+        pkill -f waybar || true
+        sleep 0.2
+        pkill -9 -f waybar || true
+        hyprctl dispatch exec waybar
+    ) &
 
-    log_info "Reloading swaync..."
-    kill_pids_by_name "swaync" "USR1"
+    # Hard restart SwayNC
+    (
+        pkill -f swaync || true
+        sleep 0.2
+        pkill -9 -f swaync || true
+        hyprctl dispatch exec swaync
+    ) &
 
-    # Kitty auto-reloads via theme.conf include
-    kill_pids_by_name "kitty" "USR1"
+    # Kitty supports USR1 flawlessly for live reloads
+    pkill -x -USR1 kitty || true &
 
-    log_success "Applications reloaded"
+    wait
+    log_success "Applications reloaded cleanly"
 }
 
 save_current_wallpaper() {
@@ -137,7 +127,15 @@ save_current_wallpaper() {
 }
 
 pick_random_wallpaper() {
-    find "${WALLS_DIR}" -maxdepth 1 -type f | shuf -n 1
+    local current_wall=""
+    local wall_file="${CONFIG_DIR}/.current_wallpaper"
+
+    if [ -f "$wall_file" ]; then
+        current_wall="$(cat "$wall_file")"
+    fi
+
+    # Find all wallpapers, exclude the current one, and pick a random one
+    find "${WALLS_DIR}" -maxdepth 1 -type f ! -path "$current_wall" | shuf -n 1
 }
 
 # ============================================================================
