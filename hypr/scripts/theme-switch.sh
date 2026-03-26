@@ -114,8 +114,12 @@ reload_apps() {
         hyprctl dispatch exec swaync
     ) &
 
-    # Kitty supports USR1 flawlessly for live reloads
-    pkill -x -USR1 kitty || true &
+    # Reload kitty terminals with remote control
+    if command -v killall &> /dev/null; then
+        killall -SIGUSR1 kitty 2>/dev/null || true
+    else
+        pkill -USR1 kitty 2>/dev/null || true
+    fi &
 
     wait
     log_success "Applications reloaded cleanly"
