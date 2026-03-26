@@ -90,7 +90,7 @@ get_bluetooth_devices() {
 
 # Scan for Bluetooth devices
 scan_bluetooth() {
-    notify-send "Bluetooth" "Scanning for devices..."
+    notify-send "Bluetooth Scan" "Scanning for 8 seconds..." -t 8000
 
     # Start scan in background
     (
@@ -106,16 +106,27 @@ scan_bluetooth() {
     local devices
     devices=$(bluetoothctl devices | awk '{$1=""; $2=""; print substr($0,3)}' | sort -u)
 
-    if [ -z "$devices" ]; then
-        notify-send "Bluetooth" "No devices found"
-        return
+    # Build menu with devices or "no devices" message
+    local menu=""
+    if [ -n "$devices" ]; then
+        menu="$devices"
+    else
+        menu="No devices found\n────────────────────────────────────────────────────────────────────────\nScan Again"
     fi
 
     # Show devices in rofi
     local selected
-    selected=$(echo "$devices" | rofi -dmenu -i -p "Select Device to Pair/Connect")
+    selected=$(echo -e "$menu" | rofi -dmenu -i -p "Bluetooth Devices")
 
     if [ -z "$selected" ]; then
+        return
+    fi
+
+    # Handle "Scan Again" or "No devices found"
+    if [[ "$selected" == "Scan Again" ]]; then
+        scan_bluetooth
+        return
+    elif [[ "$selected" == "No devices found" ]]; then
         return
     fi
 
