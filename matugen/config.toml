@@ -78,6 +78,13 @@ output_path = "~/.config/rofi/theme.rasi"
 input_path = "~/.config/kitty/theme.conf.template"
 output_path = "~/.config/kitty/theme.conf"
 
+# ----------------------------------------------------------------------------
+# Hyprlock (Lock Screen) Theme
+# ----------------------------------------------------------------------------
+[templates.hyprlock]
+input_path = "~/.config/hypr/hyprlock.conf.template"
+output_path = "~/.config/hypr/hyprlock.conf"
+
 # ============================================================================
 # Reload Apps - Commands to run after template generation
 # ============================================================================
