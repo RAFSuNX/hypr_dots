@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 # ============================================================================
-# Audio Manager - Rofi Audio Device Selector
+# Audio & Bluetooth Manager - Rofi Device Selector
 # ============================================================================
-# Material You themed audio output switcher for Waybar
+# Material You themed audio and bluetooth manager for Waybar
 # ============================================================================
 
 set -euo pipefail
 
 # Icons (Simple ASCII/Unicode)
 ICON_ACTIVE="●"
+ICON_CONNECTED="◆"
 
 # Get current default sink ID
 get_current_sink_id() {
@@ -61,6 +62,95 @@ set_audio_device() {
     fi
 }
 
+# ============================================================================
+# Bluetooth Functions
+# ============================================================================
+
+# Check if bluetoothctl is available
+check_bluetooth() {
+    command -v bluetoothctl &> /dev/null
+}
+
+# Get paired Bluetooth devices
+get_bluetooth_devices() {
+    if ! check_bluetooth; then
+        return
+    fi
+
+    bluetoothctl devices Paired | while read -r _ mac name; do
+        local connected=""
+        if bluetoothctl info "$mac" | grep -q "Connected: yes"; then
+            connected="  $ICON_CONNECTED"
+        else
+            connected="    "
+        fi
+        echo "$name$connected"
+    done
+}
+
+# Scan for Bluetooth devices
+scan_bluetooth() {
+    notify-send "Bluetooth" "Scanning for devices..." &
+
+    # Start scan
+    echo "scan on" | bluetoothctl &
+    sleep 5
+    echo "scan off" | bluetoothctl
+
+    # Show available devices
+    local devices
+    devices=$(bluetoothctl devices | awk '{$1=""; print substr($0,2)}')
+
+    if [ -n "$devices" ]; then
+        local selected
+        selected=$(echo "$devices" | rofi -dmenu -i -p "Pair Device")
+
+        if [ -n "$selected" ]; then
+            local mac
+            mac=$(bluetoothctl devices | grep -F "$selected" | awk '{print $2}')
+
+            if [ -n "$mac" ]; then
+                echo -e "pair $mac\nconnect $mac" | bluetoothctl && \
+                    notify-send "Bluetooth" "Paired with $selected" || \
+                    notify-send "Bluetooth" "Failed to pair with $selected"
+            fi
+        fi
+    else
+        notify-send "Bluetooth" "No devices found"
+    fi
+}
+
+# Toggle Bluetooth device connection
+toggle_bluetooth_device() {
+    local selected=$1
+
+    # Remove connection marker
+    local device_name
+    device_name=$(echo "$selected" | sed -E 's/ +◆$//' | xargs)
+
+    # Get device MAC address
+    local mac
+    mac=$(bluetoothctl devices Paired | grep -F "$device_name" | awk '{print $2}')
+
+    if [ -z "$mac" ]; then
+        notify-send "Bluetooth Error" "Device not found"
+        return
+    fi
+
+    # Check if connected
+    if bluetoothctl info "$mac" | grep -q "Connected: yes"; then
+        # Disconnect
+        echo "disconnect $mac" | bluetoothctl && \
+            notify-send "Bluetooth" "Disconnected from $device_name" || \
+            notify-send "Bluetooth Error" "Failed to disconnect"
+    else
+        # Connect
+        echo "connect $mac" | bluetoothctl && \
+            notify-send "Bluetooth" "Connected to $device_name" || \
+            notify-send "Bluetooth Error" "Failed to connect"
+    fi
+}
+
 # Main menu
 main() {
     local current_id
@@ -68,22 +158,46 @@ main() {
 
     # Build menu options
     local menu=""
-    menu+=$(get_audio_devices "$current_id")
 
-    # Add settings option
+    # Audio devices section
+    menu+=$(get_audio_devices "$current_id")
     menu+="\n────────────────────────────────────────────────────────────────────────\n"
     menu+="Audio Settings"
 
+    # Bluetooth section (if available)
+    if check_bluetooth; then
+        menu+="\n────────────────────────────────────────────────────────────────────────\n"
+
+        # Add paired devices
+        local bt_devices
+        bt_devices=$(get_bluetooth_devices)
+        if [ -n "$bt_devices" ]; then
+            menu+="$bt_devices\n"
+        fi
+
+        # Bluetooth actions
+        menu+="Scan Bluetooth Devices\n"
+        menu+="Bluetooth Settings"
+    fi
+
     # Show rofi menu
     local selected
-    selected=$(echo -e "$menu" | rofi -dmenu -i -p "Audio Output")
+    selected=$(echo -e "$menu" | rofi -dmenu -i -p "Audio & Bluetooth")
 
     # Handle selection
     if [ -z "$selected" ]; then
         exit 0
-    elif [[ "$selected" == *"Audio Settings"* ]]; then
+    elif [[ "$selected" == "Audio Settings" ]]; then
         pavucontrol &
+    elif [[ "$selected" == "Scan Bluetooth Devices" ]]; then
+        scan_bluetooth
+    elif [[ "$selected" == "Bluetooth Settings" ]]; then
+        blueman-manager &
+    elif [[ "$selected" == *"$ICON_CONNECTED"* ]] || bluetoothctl devices Paired | grep -qF "$(echo "$selected" | xargs)"; then
+        # Bluetooth device selected
+        toggle_bluetooth_device "$selected"
     else
+        # Audio device selected
         set_audio_device "$selected"
     fi
 }
