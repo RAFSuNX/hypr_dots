@@ -11,12 +11,14 @@
 
 ## Components
 
-- **Hyprland** - Wayland compositor with themed borders and UI
-- **Waybar** - Status bar with themed modules
-- **SwayNC** - Notification center with themed notifications
-- **Rofi** - App launcher with themed UI
-- **Kitty** - Terminal with themed colors
-- **SWWW** - Wallpaper daemon with smooth transitions
+- **Hyprland** `v0.52.1` - Wayland compositor with themed borders and UI
+- **Hyprlock** `v0.9.2` - Lock screen with Material You theming
+- **Waybar** `v0.14.0` - Status bar with themed modules
+- **SwayNC** `v0.12.3` - Notification center with themed notifications
+- **Rofi** `v2.0.0` - App launcher with themed UI
+- **Kitty** `v0.44.0` - Terminal with themed colors
+- **Matugen** `v3.0.0` - Material You color extraction engine
+- **SWWW** `v0.11.2` - Wallpaper daemon with smooth transitions
 
 ## Directory Structure
 
@@ -26,6 +28,7 @@
 ├── CLAUDE.md              # Rice manager guide (for Claude)
 ├── hypr/
 │   ├── hyprland.conf      # Main Hyprland config
+│   ├── hyprlock.conf.template # Generates ~/.config/hypr/hyprlock.conf
 │   ├── theme.conf.template # Generates ~/.config/hypr/theme.conf
 │   └── scripts/
 │       └── theme-switch.sh # Theme switcher script
@@ -81,6 +84,7 @@ cp ~/Downloads/cool-wallpaper.jpg ~/claude/rice/walls/
 3. **Extracts colors** using matugen Material You algorithm
 4. **Generates themed configs** from templates:
    - `~/.config/hypr/theme.conf`
+   - `~/.config/hypr/hyprlock.conf`
    - `~/.config/waybar/style.css`
    - `~/.config/swaync/style.css`
    - `~/.config/rofi/theme.rasi`
@@ -95,6 +99,7 @@ cp ~/Downloads/cool-wallpaper.jpg ~/claude/rice/walls/
 Edit the `.template` files to customize how colors are applied:
 
 - `hypr/theme.conf.template` - Border colors, UI elements
+- `hypr/hyprlock.conf.template` - Lock screen styling
 - `waybar/style.template.css` - Status bar styling
 - `swaync/style.template.css` - Notification styling
 - `rofi/theme.template.rasi` - App launcher styling
@@ -139,8 +144,16 @@ Default keybindings from `hyprland.conf`:
 - `SUPER + C` - Close window
 - `SUPER + R` - Open app launcher (rofi)
 - `SUPER + E` - Open file manager
+- `SUPER + L` - Lock screen (hyprlock)
+- `SUPER + N` - Toggle notifications
+- `SUPER + F` - Fullscreen window
 - `SUPER + 1-9` - Switch workspace
 - `SUPER + SHIFT + 1-9` - Move window to workspace
+- `SUPER + ALT + Arrows` - Resize window
+- `SUPER + CTRL + Arrows` - Move window
+- `Print Screen` - Screenshot (full screen)
+- `SHIFT + Print Screen` - Screenshot (select area)
+- `CTRL + Print Screen` - Screenshot (active window)
 
 ## Troubleshooting
 
