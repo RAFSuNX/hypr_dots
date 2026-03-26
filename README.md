@@ -23,8 +23,10 @@
 ## Directory Structure
 
 ```
-rice/
+hypr_dots/
+├── .gitignore             # Git ignore file
 ├── README.md              # This file
+├── applications/          # Desktop application entries
 ├── hypr/
 │   ├── hyprland.conf      # Main Hyprland config
 │   ├── hyprlock.conf.template # Generates ~/.config/hypr/hyprlock.conf
@@ -33,7 +35,8 @@ rice/
 │       └── theme-switch.sh # Theme switcher script
 ├── waybar/
 │   ├── config.jsonc       # Waybar modules
-│   └── style.template.css # Generates ~/.config/waybar/style.css
+│   ├── style.template.css # Generates ~/.config/waybar/style.css
+│   └── scripts/           # Waybar helper scripts
 ├── swaync/
 │   ├── config.json        # Notification settings
 │   └── style.template.css # Generates ~/.config/swaync/style.css
@@ -45,7 +48,7 @@ rice/
 │   └── theme.conf.template # Generates ~/.config/kitty/theme.conf
 ├── matugen/
 │   └── config.toml        # Theme engine config
-└── walls/
+└── walls/                 # Wallpaper storage
     └── default.jpg        # Default wallpaper
 ```
 
