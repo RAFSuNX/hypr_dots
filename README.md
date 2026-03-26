@@ -2,14 +2,14 @@
 
 > **Dynamic theming system that extracts colors from wallpaper and applies them across all components**
 
-## 🎨 Features
+## Features
 
 - **Material You Color Extraction** - Uses `matugen` to extract beautiful color palettes
 - **Dynamic Theming** - One wallpaper change themes everything
 - **Live Reload** - Changes apply instantly without restart
 - **Production Quality** - Clean, well-documented, reusable code
 
-## 📦 Components
+## Components
 
 - **Hyprland** - Wayland compositor with themed borders and UI
 - **Waybar** - Status bar with themed modules
@@ -18,7 +18,7 @@
 - **Kitty** - Terminal with themed colors
 - **SWWW** - Wallpaper daemon with smooth transitions
 
-## 🗂️ Directory Structure
+## Directory Structure
 
 ```
 ~/claude/rice/
@@ -47,7 +47,7 @@
     └── default.jpg        # Default wallpaper
 ```
 
-## 🚀 Usage
+## Usage
 
 Generated files are not tracked in this repo. `matugen` writes them into `~/.config` from the templates stored here.
 
@@ -88,7 +88,7 @@ cp ~/Downloads/cool-wallpaper.jpg ~/claude/rice/walls/
 5. **Reloads applications** to apply new theme
 6. **Saves current wallpaper** for next session
 
-## 🎯 Customization
+## Customization
 
 ### Modify Theme Templates
 
@@ -131,7 +131,7 @@ All templates have access to Material You colors:
 ... and many more
 ```
 
-## 📋 Keybindings (Hyprland)
+## Keybindings (Hyprland)
 
 Default keybindings from `hyprland.conf`:
 
@@ -142,7 +142,7 @@ Default keybindings from `hyprland.conf`:
 - `SUPER + 1-9` - Switch workspace
 - `SUPER + SHIFT + 1-9` - Move window to workspace
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Theme not applying
 
@@ -182,7 +182,7 @@ nano ~/.config/matugen/config.toml
 # Then re-run theme-switch.sh
 ```
 
-## 📦 Installation (Fresh System)
+## Installation (Fresh System)
 
 1. **Install NixOS packages** (already done in `/etc/nixos/configuration.nix`)
 
@@ -203,7 +203,7 @@ nano ~/.config/matugen/config.toml
 
 5. **Reload Hyprland** or restart
 
-## 🎨 Color Scheme Examples
+## Color Scheme Examples
 
 The Material You algorithm generates different palettes based on the wallpaper:
 
@@ -213,14 +213,14 @@ The Material You algorithm generates different palettes based on the wallpaper:
 - **scheme-expressive** - Bold, creative colors
 - **scheme-fidelity** - Stays closer to wallpaper's original colors
 
-## 📝 Credits
+## Credits
 
 - **matugen** - Color extraction and theming engine
 - **Material You** - Color system by Google
 - **Hyprland** - Wayland compositor
 - **Created with**: Claude Sonnet 4.5
 
-## 📄 License
+## License
 
 Free to use, modify, and share. Public dotfiles ready!
 
