@@ -83,7 +83,7 @@
     "pulseaudio": {
         "format": "VOL {volume:>2}%",
         "format-muted": "VOL off",
-        "on-click": "pavucontrol",
+        "on-click": "~/.config/waybar/scripts/audio-manager.sh",
         "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+",
         "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-",
         "max-volume": 99,
