@@ -35,13 +35,12 @@ get_signal_icon() {
     fi
 }
 
-# Get list of WiFi networks (fast version with awk)
+# Get list of WiFi networks (instant version with cached data)
 get_networks() {
-    local current_network
-    current_network=$(get_current_network)
+    local current_network="$1"
 
-    # Process network list with awk for speed
-    nmcli -f SSID,SIGNAL,SECURITY device wifi list | tail -n +2 | awk -v current="$current_network" '
+    # Use -g for terse mode (uses cached scan, no hardware scan)
+    nmcli -g SSID,SIGNAL,SECURITY device wifi | awk -F: -v current="$current_network" '
     {
         ssid = $1
         signal = $2
@@ -73,9 +72,9 @@ connect_network() {
     local ssid
     ssid=$(echo "$selected" | sed -E 's/^[█░]+ +//' | sed -E 's/ ⚿//g' | sed -E 's/ ?<span.*<\/span>//g' | xargs)
 
-    # Check if network requires password
+    # Check if network requires password (use cached data)
     local security
-    security=$(nmcli -f SSID,SECURITY device wifi list | grep "^$ssid" | awk '{print $2}')
+    security=$(nmcli -g SSID,SECURITY device wifi | grep "^$ssid:" | cut -d: -f2)
 
     if [ "$security" != "--" ]; then
         # Prompt for password using rofi
@@ -120,8 +119,8 @@ main() {
         menu+="────────────────────────────────\n"
     fi
 
-    # Add available networks
-    menu+=$(get_networks)
+    # Add available networks (pass current_network to avoid duplicate call)
+    menu+=$(get_networks "$current_network")
 
     # Add settings option
     menu+="\n────────────────────────────────\n"
