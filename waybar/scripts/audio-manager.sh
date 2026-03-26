@@ -90,33 +90,57 @@ get_bluetooth_devices() {
 
 # Scan for Bluetooth devices
 scan_bluetooth() {
-    notify-send "Bluetooth" "Scanning for devices..." &
+    notify-send "Bluetooth" "Scanning for devices..."
 
-    # Start scan
-    echo "scan on" | bluetoothctl &
-    sleep 5
-    echo "scan off" | bluetoothctl
+    # Start scan in background
+    (
+        bluetoothctl scan on &
+        local scan_pid=$!
+        sleep 8
+        kill $scan_pid 2>/dev/null || true
+    ) &
 
-    # Show available devices
+    sleep 8
+
+    # Get all discovered devices (both paired and unpaired)
     local devices
-    devices=$(bluetoothctl devices | awk '{$1=""; print substr($0,2)}')
+    devices=$(bluetoothctl devices | awk '{$1=""; $2=""; print substr($0,3)}' | sort -u)
 
-    if [ -n "$devices" ]; then
-        local selected
-        selected=$(echo "$devices" | rofi -dmenu -i -p "Pair Device")
-
-        if [ -n "$selected" ]; then
-            local mac
-            mac=$(bluetoothctl devices | grep -F "$selected" | awk '{print $2}')
-
-            if [ -n "$mac" ]; then
-                echo -e "pair $mac\nconnect $mac" | bluetoothctl && \
-                    notify-send "Bluetooth" "Paired with $selected" || \
-                    notify-send "Bluetooth" "Failed to pair with $selected"
-            fi
-        fi
-    else
+    if [ -z "$devices" ]; then
         notify-send "Bluetooth" "No devices found"
+        return
+    fi
+
+    # Show devices in rofi
+    local selected
+    selected=$(echo "$devices" | rofi -dmenu -i -p "Select Device to Pair/Connect")
+
+    if [ -z "$selected" ]; then
+        return
+    fi
+
+    # Get MAC address
+    local mac
+    mac=$(bluetoothctl devices | grep -F "$selected" | awk '{print $2}' | head -1)
+
+    if [ -z "$mac" ]; then
+        notify-send "Bluetooth Error" "Device not found"
+        return
+    fi
+
+    # Check if already paired
+    if bluetoothctl info "$mac" | grep -q "Paired: yes"; then
+        # Just connect
+        bluetoothctl connect "$mac" && \
+            notify-send "Bluetooth" "Connected to $selected" || \
+            notify-send "Bluetooth Error" "Failed to connect to $selected"
+    else
+        # Pair and connect
+        bluetoothctl pair "$mac" && \
+        bluetoothctl trust "$mac" && \
+        bluetoothctl connect "$mac" && \
+            notify-send "Bluetooth" "Paired and connected to $selected" || \
+            notify-send "Bluetooth Error" "Failed to pair with $selected"
     fi
 }
 
