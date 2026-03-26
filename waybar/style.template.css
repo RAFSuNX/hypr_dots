@@ -88,6 +88,8 @@ window#waybar {
 #battery.critical { color: {{ colors.error.default.hex }}; }
 #battery.charging { color: {{ colors.primary.default.hex }}; }
 #network.disconnected { color: {{ colors.outline.default.hex }}; }
+#custom-cpu { color: {{ colors.primary.default.hex }}; }
+#custom-gpu { color: {{ colors.secondary.default.hex }}; }
 
 #tray {
     padding: 0 8px;
