@@ -19,6 +19,7 @@
     ],
 
     "modules-center": [
+        "custom/netspeed",
         "clock"
     ],
 
@@ -49,6 +50,12 @@
     },
 
     // ── Center Modules──────────────────────────────────────────────────────
+
+    "custom/netspeed": {
+        "exec": "~/.config/waybar/scripts/netspeed.sh",
+        "return-type": "json",
+        "interval": 1
+    },
 
     "clock": {
         "format": "{:%I:%M %p - %a %d %b}",

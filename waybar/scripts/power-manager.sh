@@ -33,10 +33,18 @@ main() {
             systemctl suspend
             ;;
         *"Reboot"*)
-            systemctl reboot
+            local confirm
+            confirm=$(echo -e "No\nYes" | rofi -dmenu -i -p "Confirm Reboot?")
+            if [[ "$confirm" == "Yes" ]]; then
+                systemctl reboot
+            fi
             ;;
         *"Shutdown"*)
-            systemctl poweroff
+            local confirm
+            confirm=$(echo -e "No\nYes" | rofi -dmenu -i -p "Confirm Shutdown?")
+            if [[ "$confirm" == "Yes" ]]; then
+                systemctl poweroff
+            fi
             ;;
         *)
             exit 0
