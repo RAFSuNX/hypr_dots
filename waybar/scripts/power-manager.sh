@@ -24,7 +24,7 @@ main() {
     # Handle selection
     case "$selected" in
         *"Lock"*)
-            loginctl lock-session
+            hyprlock
             ;;
         *"Logout"*)
             hyprctl dispatch exit
