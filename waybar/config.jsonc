@@ -113,7 +113,7 @@
         },
         "format": "BAT {capacity:>2}%",
         "format-charging": "CHR {capacity:>2}%",
-        "format-full": "BAT 99%",
+        "format-full": "FULL",
         "tooltip": false
     },
 
