@@ -119,11 +119,11 @@
     },
 
     "network": {
-        "interface": "wlp3s0",
         "format-wifi": "NET {signalStrength:>2}%",
         "format-ethernet": "NET eth",
         "format-disconnected": "NET off",
         "tooltip-format-wifi": "{essid} {signalStrength}%\n{ipaddr}",
+        "tooltip-format-ethernet": "{ifname} {ipaddr}",
         "on-click": "~/.config/waybar/scripts/network-manager.sh"
     },
 
