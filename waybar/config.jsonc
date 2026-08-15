@@ -27,6 +27,7 @@
         "tray",
         "network",
         "custom/cpu",
+        "custom/cpumode",
         "memory",
         "custom/gpu",
         "pulseaudio",
@@ -72,6 +73,14 @@
         "exec": "~/.config/waybar/scripts/cpu-status.sh",
         "return-type": "json",
         "interval": 3
+    },
+
+    "custom/cpumode": {
+        "exec": "~/.config/waybar/scripts/cpu-mode.sh",
+        "return-type": "json",
+        "interval": 3,
+        "on-click": "~/.config/waybar/scripts/cpu-mode-toggle.sh",
+        "tooltip": true
     },
 
     "memory": {
