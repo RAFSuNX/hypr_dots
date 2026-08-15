@@ -1,0 +1,42 @@
+/* Default swaync style — overwritten by theme-switch.sh on first login */
+
+* {
+    font-family: JetBrainsMono Nerd Font, monospace;
+    font-size: 13px;
+}
+
+.control-center {
+    background-color: #141218;
+    color: #E6E0E9;
+    border: 1px solid #49454F;
+    border-radius: 0;
+}
+
+.notification {
+    background-color: #211F26;
+    color: #E6E0E9;
+    border: 1px solid #49454F;
+    border-radius: 0;
+    padding: 8px;
+    margin: 4px;
+}
+
+.notification-action {
+    background-color: #4F378B;
+    color: #EADDFF;
+    border-radius: 0;
+}
+
+.notification-action:hover {
+    background-color: #6650A4;
+}
+
+.close-button {
+    background-color: transparent;
+    color: #938F99;
+}
+
+.close-button:hover {
+    background-color: rgba(242, 184, 181, 0.2);
+    color: #F2B8B5;
+}

@@ -1,0 +1,71 @@
+/* Default rofi theme — overwritten by theme-switch.sh on first login */
+
+* {
+    bg:      #141218;
+    bg-alt:  #211F26;
+    fg:      #E6E0E9;
+    fg-alt:  #938F99;
+    accent:  #D0BCFF;
+    border:  #49454F;
+
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    background-color: @bg;
+    border:           1px solid;
+    border-color:     @border;
+    border-radius:    0;
+    width:            480px;
+}
+
+mainbox {
+    background-color: transparent;
+    children: [ inputbar, listview ];
+}
+
+inputbar {
+    background-color: @bg-alt;
+    padding:          10px 12px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color:       @accent;
+    padding:          0 8px 0 0;
+}
+
+entry {
+    background-color: transparent;
+    text-color:       @fg;
+    placeholder:      "Search...";
+    placeholder-color: @fg-alt;
+}
+
+listview {
+    background-color: transparent;
+    padding:          4px 0;
+    lines:            8;
+}
+
+element {
+    background-color: transparent;
+    padding:          8px 12px;
+}
+
+element selected {
+    background-color: rgba(208, 188, 255, 0.15);
+    text-color:       @accent;
+}
+
+element-icon {
+    size:   20px;
+    margin: 0 8px 0 0;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+}

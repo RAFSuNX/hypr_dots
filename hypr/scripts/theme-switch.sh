@@ -33,7 +33,7 @@ log_error() {
 }
 
 check_dependencies() {
-    local deps=("swww" "matugen" "hyprctl" "pkill" "pgrep")
+    local deps=("awww" "matugen" "hyprctl" "pkill" "pgrep")
     local missing=()
 
     for dep in "${deps[@]}"; do
@@ -50,13 +50,11 @@ check_dependencies() {
 }
 
 start_swww_daemon() {
-    if ! pgrep -x swww-daemon > /dev/null; then
-        log_info "Starting swww daemon..."
-        swww-daemon &
-        
-        # Wait up to 2 seconds for socket to be ready
+    if ! awww query &>/dev/null; then
+        log_info "Starting awww daemon..."
+        awww-daemon &
         for _ in {1..20}; do
-            if swww query &>/dev/null; then
+            if awww query &>/dev/null; then
                 break
             fi
             sleep 0.1
@@ -69,7 +67,7 @@ set_wallpaper() {
 
     log_info "Setting wallpaper: $(basename "$wallpaper")"
 
-    swww img "$wallpaper" \
+    awww img "$wallpaper" \
         --transition-type wipe \
         --transition-duration 2 \
         --transition-fps 60 \
@@ -83,8 +81,35 @@ generate_themes() {
 
     log_info "Extracting colors from wallpaper..."
 
-    # Run matugen to extract colors and generate themed configs
-    matugen image "$wallpaper" \
+    # Extract most vibrant color from wallpaper (awk tracks best internally — no SIGPIPE)
+    local hex
+    hex=$(magick "$wallpaper" -resize 50x50\! txt:- 2>/dev/null | awk '
+        NR>1 {
+            match($0, /#([0-9A-Fa-f]{6})/, arr)
+            h = arr[1]
+            r = strtonum("0x" substr(h,1,2)) / 255
+            g = strtonum("0x" substr(h,3,2)) / 255
+            b = strtonum("0x" substr(h,5,2)) / 255
+            mx = (r>g?r:g); mx = (mx>b?mx:b)
+            mn = (r<g?r:g); mn = (mn<b?mn:b)
+            sat = (mx>0) ? (mx-mn)/mx : 0
+            if (sat > 0.25 && sat > best_sat) { best_sat = sat; best_hex = h }
+        }
+        END { if (best_hex != "") print best_hex }')
+
+    # Fallback: average color
+    if [ -z "$hex" ]; then
+        hex=$(magick "$wallpaper" -resize 1x1\! -format "%[hex:u]" info:- 2>/dev/null)
+    fi
+
+    if [ -z "$hex" ]; then
+        log_error "Failed to extract color from wallpaper"
+        exit 1
+    fi
+
+    log_info "Source color: #$hex"
+
+    matugen color hex "#$hex" \
         --mode dark \
         --type scheme-tonal-spot \
         --config "${CONFIG_DIR}/matugen/config.toml"
@@ -95,33 +120,35 @@ generate_themes() {
 reload_apps() {
     log_info "Reloading applications..."
 
-    # Reload hyprland instantly
-    hyprctl reload &
+    # Reload Hyprland (picks up new theme.lua)
+    hyprctl reload
 
-    # Hard restart Waybar (use -f for wrapped processes)
-    (
-        pkill -f waybar || true
-        sleep 0.2
-        pkill -9 -f waybar || true
-        hyprctl dispatch exec waybar
-    ) &
+    # Restart waybar with explicit config paths
+    local wpids; wpids=$(pgrep waybar)
+    [ -n "$wpids" ] && kill -9 $wpids 2>/dev/null || true
+    sleep 0.5
+    waybar \
+        --config "${CONFIG_DIR}/waybar/config.jsonc" \
+        --style "${CONFIG_DIR}/waybar/style.css" \
+        &>/dev/null &
+    disown
 
-    # Hard restart SwayNC
-    (
-        pkill -f swaync || true
-        sleep 0.2
-        pkill -9 -f swaync || true
-        hyprctl dispatch exec swaync
-    ) &
+    # Restart swaync
+    local spids; spids=$(pgrep swaync)
+    [ -n "$spids" ] && kill -9 $spids 2>/dev/null || true
+    sleep 0.2
+    swaync &>/dev/null &
+    disown
 
-    # Reload kitty terminals with remote control
-    if command -v killall &> /dev/null; then
-        killall -SIGUSR1 kitty 2>/dev/null || true
-    else
-        pkill -USR1 kitty 2>/dev/null || true
-    fi &
+    # Reload kitty colors in all running instances via remote control
+    local kitty_colors; kitty_colors=$(mktemp /tmp/kitty-colors-XXXXXX.conf)
+    grep -E "^(foreground|background |selection_|cursor|url_color|active_tab_|inactive_tab_|color[0-9]+)" \
+        "${CONFIG_DIR}/kitty/theme.conf" > "$kitty_colors"
+    for socket in /tmp/kitty-*; do
+        kitty @ --to "unix://${socket}" set-colors --all "$kitty_colors" 2>/dev/null || true
+    done
+    rm -f "$kitty_colors"
 
-    wait
     log_success "Applications reloaded cleanly"
 }
 

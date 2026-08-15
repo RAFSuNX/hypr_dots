@@ -47,8 +47,8 @@ contrast = 0.0
 # Hyprland Theme
 # ----------------------------------------------------------------------------
 [templates.hyprland]
-input_path = "~/.config/hypr/theme.conf.template"
-output_path = "~/.config/hypr/theme.conf"
+input_path = "~/.config/hypr/theme.lua.template"
+output_path = "~/.config/hypr/theme.lua"
 
 # ----------------------------------------------------------------------------
 # Waybar Theme
